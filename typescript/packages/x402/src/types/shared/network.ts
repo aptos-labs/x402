@@ -3,6 +3,9 @@ import { z } from "zod";
 export const NetworkSchema = z.enum([
   "abstract",
   "abstract-testnet",
+  "aptos-mainnet",
+  "aptos-testnet",
+  "aptos-devnet",
   "base-sepolia",
   "base",
   "avalanche-fuji",
@@ -58,9 +61,19 @@ export const SvmNetworkToChainId = new Map<Network, number>([
   ["solana", 101],
 ]);
 
+// aptos
+export const SupportedAptosNetworks: Network[] = ["aptos-mainnet", "aptos-testnet", "aptos-devnet"];
+export const AptosNetworkToChainId = new Map<Network, number>([
+  ["aptos-mainnet", 1],
+  ["aptos-testnet", 2],
+  ["aptos-devnet", 3],
+]);
+
 export const ChainIdToNetwork = Object.fromEntries(
-  [...SupportedEVMNetworks, ...SupportedSVMNetworks].map(network => [
-    EvmNetworkToChainId.get(network),
+  [...SupportedEVMNetworks, ...SupportedSVMNetworks, ...SupportedAptosNetworks].map(network => [
+    EvmNetworkToChainId.get(network) ||
+      SvmNetworkToChainId.get(network) ||
+      AptosNetworkToChainId.get(network),
     network,
   ]),
 ) as Record<number, Network>;

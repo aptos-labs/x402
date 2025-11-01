@@ -1,10 +1,15 @@
 import { safeBase64Encode, safeBase64Decode } from "../../../../shared";
-import { SupportedEVMNetworks, SupportedSVMNetworks } from "../../../../types";
+import {
+  SupportedEVMNetworks,
+  SupportedSVMNetworks,
+  SupportedAptosNetworks,
+} from "../../../../types";
 import {
   PaymentPayload,
   PaymentPayloadSchema,
   ExactEvmPayload,
   ExactSvmPayload,
+  ExactAptosPayload,
 } from "../../../../types/verify";
 
 /**
@@ -37,6 +42,12 @@ export function encodePayment(payment: PaymentPayload): string {
   // svm
   if (SupportedSVMNetworks.includes(payment.network)) {
     safe = { ...payment, payload: payment.payload as ExactSvmPayload };
+    return safeBase64Encode(JSON.stringify(safe));
+  }
+
+  // aptos
+  if (SupportedAptosNetworks.includes(payment.network)) {
+    safe = { ...payment, payload: payment.payload as ExactAptosPayload };
     return safeBase64Encode(JSON.stringify(safe));
   }
 
