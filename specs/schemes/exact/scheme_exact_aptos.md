@@ -2,7 +2,7 @@
 
 ## Summary
 
-The `exact` scheme on Aptos transfers a specific amount of APT (Aptos Coin) from the payer to the resource server using the standard Aptos transfer function (`0x1::aptos_account::transfer`). The approach requires the payer to form a complete signed transaction which results in the facilitator having no ability to adjust the transaction and direct funds anywhere but the address specified by the resource server in paymentRequirements.
+The `exact` scheme on Aptos transfers a specific amount of a fungible asset (such as APT or stablecoins like USDC) from the payer to the resource server using the Aptos fungible asset transfer function (`0x1::primary_fungible_store::transfer`). The approach requires the payer to construct a complete signed transaction ensuring that the facilitator cannot alter the transaction or redirect funds to any address other than the one specified by the resource server in paymentRequirements.
 
 **Current Implementation:** Uses the standard Aptos account transfer function for simplicity.
 
@@ -12,14 +12,14 @@ The `exact` scheme on Aptos transfers a specific amount of APT (Aptos Coin) from
 2. Emits a `PaymentMade` event containing an invoice ID, amount, recipient, and asset
 3. Transfers the fungible asset from payer to recipient
 
-The contract-based approach will ensure payments can be uniquely identified and verified on-chain through the invoice ID, preventing confusion between x402 payments and regular transfers.
+The contract-based approach will ensure payments can be uniquely identified and verified on-chain by the invoice ID, preventing confusion between x402 payments and regular transfers.
 
 ## Protocol Sequencing
 
-The following outlines the flow of the `exact` scheme on `Aptos`:
+The following sequence outlines the flow of the `exact` scheme on Aptos:
 
-1. Client makes a request to a `resource server` and gets back a `402 Payment Required` response.
-2. If the server/facilitator supports sponsorship, and the client wants to make use of sponsorship, it can make a request to the provided sponsorship service (gas station) to construct a sponsored transaction.
+1. Client makes a request to a `resource server` and receives a `402 Payment Required` response.
+2. If the server/facilitator supports sponsorship and the client wants to make use of sponsorship, it can make a request to the provided sponsorship service (gas station) to construct a sponsored transaction.
 3. Client constructs and signs a transaction to be used as payment, transferring the fungible asset to the resource server's address.
 4. Client serializes the signed transaction using BCS (Binary Canonical Serialization) and encodes it as Base64.
 5. Client resends the request to the `resource server` including the payment in the `X-PAYMENT` header.
@@ -96,7 +96,7 @@ Steps to verify a payment for the `exact` scheme:
 6. Verify the transfer amount matches `paymentRequirements.maxAmountRequired`.
 7. Verify the transfer recipient matches `paymentRequirements.payTo`.
 8. Simulate the transaction using the Aptos REST API to ensure it would succeed and has not already been executed/committed to the chain.
-9. Verify the transaction has not expired (check sequence number and expiration timestamp).
+9. Verify the transaction has not expired (check sequence number and expiration timestamp). Note: A buffer time should be considered to account for network propagation delays and processing time.
 
 ## Settlement
 
@@ -108,8 +108,8 @@ Settlement is performed via the facilitator submitting the transaction to the Ap
 
 ### For Sponsored Transactions:
 
-1. The facilitator adds its signature as the fee payer sponsor.
-2. The facilitator submits the multi-agent transaction (client as sender, facilitator as sponsor) to the network.
+1. The facilitator adds its signature as the fee payer sponsor (the facilitator must be the designated sponsor in the transaction).
+2. The facilitator submits the fee payer transaction with the client as the sender and the facilitator as the sponsor to the network.
 
 The settlement response includes the transaction hash which can be used to track the transaction on-chain.
 
@@ -189,6 +189,8 @@ Aptos supports:
 
 The facilitator must verify signatures according to the sender's authentication key and signature scheme.
 
+**Note**: Additional signature schemes (such as Secp256k1 and other types) may need to be supported in future implementations as Aptos adds new authentication methods.
+
 ### BCS Serialization
 
 All Aptos transactions are serialized using BCS (Binary Canonical Serialization) before being transmitted. The TypeScript SDK provides utilities for:
@@ -207,9 +209,9 @@ Valid network identifiers:
 
 ### Account Addresses
 
-Aptos account addresses are 32-byte hex strings, typically represented with a `0x` prefix. Addresses can be in short form (without leading zeros) or long form (64 hex characters).
+Aptos account addresses are 32-byte hex strings, represented with a `0x` prefix. All addresses in the x402 protocol must use the long form (64 hex characters) for consistency and ease of validation.
 
-Example: `0x1` (short) = `0x0000000000000000000000000000000000000000000000000000000000000001` (long)
+Example: `0x0000000000000000000000000000000000000000000000000000000000000001` (64 hex characters)
 
 ### Recommendation
 
