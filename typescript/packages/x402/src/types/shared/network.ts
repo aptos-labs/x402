@@ -5,7 +5,6 @@ export const NetworkSchema = z.enum([
   "abstract-testnet",
   "aptos-mainnet",
   "aptos-testnet",
-  "aptos-devnet",
   "base-sepolia",
   "base",
   "avalanche-fuji",
@@ -62,11 +61,10 @@ export const SvmNetworkToChainId = new Map<Network, number>([
 ]);
 
 // aptos
-export const SupportedAptosNetworks: Network[] = ["aptos-mainnet", "aptos-testnet", "aptos-devnet"];
+export const SupportedAptosNetworks: Network[] = ["aptos-mainnet", "aptos-testnet"];
 export const AptosNetworkToChainId = new Map<Network, number>([
   ["aptos-mainnet", 1],
   ["aptos-testnet", 2],
-  ["aptos-devnet", 3],
 ]);
 
 export const ChainIdToNetwork = Object.fromEntries(
@@ -77,3 +75,13 @@ export const ChainIdToNetwork = Object.fromEntries(
     network,
   ]),
 ) as Record<number, Network>;
+
+/**
+ * Checks if the network is an Aptos network, and casts it accordingly
+ *
+ * @param network - The network to check
+ * @returns True if the network is an Aptos network, false otherwise
+ */
+export function isAptosNetwork(network: string): network is Network {
+  return !!SupportedAptosNetworks.find(n => n === network);
+}

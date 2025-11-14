@@ -11,13 +11,13 @@ import {
   createSigner,
   SupportedEVMNetworks,
   SupportedSVMNetworks,
-  SupportedAptosNetworks,
   Signer,
   ConnectedClient,
   SupportedPaymentKind,
   isSvmSignerWallet,
   type X402Config,
 } from "x402/types";
+import { isAptosNetwork } from "x402/src/types";
 
 config();
 
@@ -79,7 +79,7 @@ app.post("/verify", async (req: Request, res: Response) => {
       client = createConnectedClient(paymentRequirements.network);
     } else if (SupportedSVMNetworks.includes(paymentRequirements.network)) {
       client = await createSigner(paymentRequirements.network, SVM_PRIVATE_KEY);
-    } else if (SupportedAptosNetworks.includes(paymentRequirements.network)) {
+    } else if (isAptosNetwork(paymentRequirements.network)) {
       client = createConnectedClient(paymentRequirements.network);
     } else {
       throw new Error("Invalid network");
@@ -137,7 +137,7 @@ app.get("/supported", async (req: Request, res: Response) => {
     x402Version: 1,
     scheme: "exact",
     network: "aptos-testnet",
-    // Note: gasStation can be added here if facilitator provides sponsored transactions
+    // Note: gasStation can be added here if the facilitator provides sponsored transactions
     // extra: {
     //   gasStation: "https://facilitator.example.com/gas-station"
     // },
@@ -162,7 +162,7 @@ app.post("/settle", async (req: Request, res: Response) => {
       client = await createSigner(paymentRequirements.network, EVM_PRIVATE_KEY);
     } else if (SupportedSVMNetworks.includes(paymentRequirements.network)) {
       client = await createSigner(paymentRequirements.network, SVM_PRIVATE_KEY);
-    } else if (SupportedAptosNetworks.includes(paymentRequirements.network)) {
+    } else if (isAptosNetwork(paymentRequirements.network)) {
       client = createConnectedClient(paymentRequirements.network);
     } else {
       throw new Error("Invalid network");

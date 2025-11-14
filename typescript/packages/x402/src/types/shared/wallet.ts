@@ -1,7 +1,7 @@
 import * as evm from "./evm/wallet";
 import * as svm from "../../shared/svm/wallet";
 import * as aptos from "../../shared/aptos/wallet";
-import { SupportedEVMNetworks, SupportedSVMNetworks, SupportedAptosNetworks } from "./network";
+import { SupportedEVMNetworks, SupportedSVMNetworks, isAptosNetwork } from "./network";
 import { Hex } from "viem";
 
 export type ConnectedClient =
@@ -12,6 +12,10 @@ export type Signer = evm.EvmSigner | svm.SvmSigner | aptos.AptosSigner;
 export type MultiNetworkSigner = {
   evm: evm.EvmSigner;
   svm: svm.SvmSigner;
+  aptos: aptos.AptosSigner;
+};
+
+export type AptosMultiNetworkSigner = {
   aptos: aptos.AptosSigner;
 };
 
@@ -30,8 +34,8 @@ export function createConnectedClient(network: string): ConnectedClient {
     return svm.createSvmConnectedClient(network);
   }
 
-  if (SupportedAptosNetworks.find(n => n === network)) {
-    return aptos.createAptosConnectedClient(network as any);
+  if (isAptosNetwork(network)) {
+    return aptos.createAptosConnectedClient(network);
   }
 
   throw new Error(`Unsupported network: ${network}`);
@@ -56,8 +60,8 @@ export function createSigner(network: string, privateKey: Hex | string): Promise
   }
 
   // aptos
-  if (SupportedAptosNetworks.find(n => n === network)) {
-    return aptos.createSignerFromPrivateKey(privateKey as string);
+  if (isAptosNetwork(network)) {
+    return aptos.createSignerFromPrivateKey(privateKey);
   }
 
   throw new Error(`Unsupported network: ${network}`);
@@ -91,6 +95,16 @@ export function isSvmSignerWallet(wallet: Signer): wallet is svm.SvmSigner {
  */
 export function isAptosSignerWallet(wallet: Signer): wallet is aptos.AptosSigner {
   return aptos.isAptosSigner(wallet);
+}
+
+/**
+ * Checks if the given wallet is an Aptos multi signer wallet
+ *
+ * @param wallet - The object wallet to check
+ * @returns True if the wallet is an Aptos signer wallet, false otherwise*
+ */
+export function isMultiNetworkSupportingAptos(wallet: object): wallet is AptosMultiNetworkSigner {
+  return "aptos" in wallet;
 }
 
 /**

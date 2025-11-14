@@ -17,7 +17,6 @@ import { Network } from "../../types/shared/network";
 export const APTOS_X402_PACKAGE_IDS: Record<string, string> = {
   "aptos-mainnet": "0x0000000000000000000000000000000000000000000000000000000000000000", // TODO: Deploy contract
   "aptos-testnet": "0x0000000000000000000000000000000000000000000000000000000000000000", // TODO: Deploy contract
-  "aptos-devnet": "0x0000000000000000000000000000000000000000000000000000000000000000", // TODO: Deploy contract
 };
 
 /**
