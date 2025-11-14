@@ -1,8 +1,8 @@
 import { encodePayment } from "../../utils";
-import { PaymentPayload, PaymentRequirements } from "../../../types/verify";
+import { AptosAddressRegex, PaymentPayload, PaymentRequirements } from "../../../types/verify";
 import { X402Config } from "../../../types/config";
-import { AptosSigner, getAptosRpcUrl } from "../../../shared/aptos/wallet";
-import { Aptos, AptosConfig, Network as AptosNetwork } from "@aptos-labs/ts-sdk";
+import { AptosSigner, getAptosNetwork, getAptosRpcUrl } from "../../../shared/aptos/wallet";
+import { Aptos, AptosConfig } from "@aptos-labs/ts-sdk";
 
 /**
  * Creates and encodes a payment header for the given client and payment requirements.
@@ -31,7 +31,7 @@ export async function createPaymentHeader(
 /**
  * Creates and signs a payment for the given client and payment requirements.
  *
- * NOTE: Currently uses the standard Aptos coin transfer function (0x1::aptos_account::transfer)
+ * NOTE: Currently uses the standard Aptos coin transfer function (0x1::primary_fungible_store::transfer)
  * for simplicity. In the future, this will be updated to use a custom x402 payment contract
  * that emits events with invoice_id for better payment tracking.
  *
@@ -48,20 +48,38 @@ export async function createAndSignPayment(
   config?: X402Config,
 ): Promise<PaymentPayload> {
   // Map x402 network to Aptos SDK network
-  const aptosNetwork =
-    paymentRequirements.network === "aptos-mainnet"
-      ? AptosNetwork.MAINNET
-      : paymentRequirements.network === "aptos-testnet"
-        ? AptosNetwork.TESTNET
-        : AptosNetwork.DEVNET;
+  const aptosNetwork = getAptosNetwork(paymentRequirements.network);
 
   // Create Aptos config with custom RPC URL if provided
-  const rpcUrl = config?.aptosConfig?.rpcUrl || getAptosRpcUrl(paymentRequirements.network);
+  const rpcUrl = config?.aptosConfig?.rpcUrl || getAptosRpcUrl(aptosNetwork);
   const aptosConfig = new AptosConfig({
     network: aptosNetwork,
     fullnode: rpcUrl,
   });
   const aptos = new Aptos(aptosConfig);
+
+  // Verify inputs
+  if (!client.accountAddress) {
+    throw new Error("Aptos account address is required");
+  }
+  if (!paymentRequirements.asset) {
+    throw new Error("Asset is required");
+  }
+  if (!paymentRequirements.asset.match(AptosAddressRegex)) {
+    throw new Error("Invalid asset address");
+  }
+  if (!paymentRequirements.payTo) {
+    throw new Error("Pay-to address is required");
+  }
+  if (!paymentRequirements.payTo.match(AptosAddressRegex)) {
+    throw new Error("Invalid pay-to address");
+  }
+  if (!paymentRequirements.maxAmountRequired) {
+    throw new Error("Max amount required is required");
+  }
+  if (!paymentRequirements.maxAmountRequired.match(/^[0-9]+$/)) {
+    throw new Error("Max amount required must be a number");
+  }
 
   // Check for sponsored transaction (gas station protocol)
   const gasStation = paymentRequirements.extra?.gasStation as string | undefined;
@@ -80,15 +98,16 @@ export async function createAndSignPayment(
 
   // Build a simple transfer transaction using the standard Aptos coin transfer function
   // For now, we use the regular transfer instead of a custom x402 contract
-  // The asset should be the coin type (e.g., "0x1::aptos_coin::AptosCoin")
+  // The asset should be the metadata address (e.g., "0x0000000000000000000000000000000a" for APT)
   const transaction = await aptos.transaction.build.simple({
     sender: client.accountAddress,
     data: {
-      function: "0x1::aptos_account::transfer",
-      typeArguments: [],
+      function: "0x1::primary_fungible_store::transfer",
+      typeArguments: ["0x1::fungible_asset::Metadata"],
       functionArguments: [
+        paymentRequirements.asset, // Asset address to transfer
         paymentRequirements.payTo, // recipient address
-        paymentRequirements.maxAmountRequired, // amount to transfer in octas
+        paymentRequirements.maxAmountRequired, // amount to transfer in subunits (e.g. 100000000 == 1 APT)
       ],
     },
   });

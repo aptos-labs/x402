@@ -2,7 +2,7 @@
 
 ## Summary
 
-The `exact` scheme on Aptos transfers a specific amount of APT (Aptos Coin) from the payer to the resource server using the standard Aptos transfer function (`0x1::aptos_account::transfer`). The approach requires the payer to form a complete signed transaction which results in the facilitator having no ability to adjust the transaction and direct funds anywhere but the address specified by the resource server in paymentRequirements.
+The `exact` scheme on Aptos transfers a specific amount of APT (Aptos Coin) from the payer to the resource server using the standard Aptos transfer function (`0x1::primary_fungible_store::transfer`). The approach requires the payer to form a complete signed transaction which results in the facilitator having no ability to adjust the transaction and direct funds anywhere but the address specified by the resource server in paymentRequirements.
 
 **Current Implementation:** Uses the standard Aptos account transfer function for simplicity.
 
@@ -54,7 +54,7 @@ In addition to the standard x402 `PaymentRequirements` fields, the `exact` schem
 ```
 
 - `asset`: The metadata address of the fungible asset (e.g., USDC on Aptos mainnet: `0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b`)
-- `network`: One of `aptos-mainnet`, `aptos-testnet`, or `aptos-devnet`
+- `network`: One of `aptos-mainnet` or `aptos-testnet`
 - `extra.gasStation`: (Optional) URL of the gas station endpoint for sponsored transactions
 
 ## `X-PAYMENT` Header Payload
@@ -186,6 +186,8 @@ Aptos supports:
 
 - **Ed25519**: Single signature scheme (most common)
 - **MultiEd25519**: Multi-signature scheme for accounts requiring multiple signatures
+- **SingleKey**: Single signature scheme for accounts with a single key, either Ed25519, Secp256k1, or Secp256r1
+- **MultiKey**: Multi-signature scheme for accounts with multiple keys, either Ed25519, Secp256k1, or Secp256r1
 
 The facilitator must verify signatures according to the sender's authentication key and signature scheme.
 
@@ -203,7 +205,6 @@ Valid network identifiers:
 
 - `aptos-mainnet`: Mainnet (Chain ID: 1)
 - `aptos-testnet`: Testnet (Chain ID: 2)
-- `aptos-devnet`: Devnet (Chain ID: varies)
 
 ### Account Addresses
 
