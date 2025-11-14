@@ -67,13 +67,13 @@ Sample Response
   {
     "x402Version": 1,
     "scheme": "exact",
-    "network": "base-sepolia"
+    "network": "base-sepolia",
     "extra": {}
   },
   {
     "x402Version": 1,
     "scheme": "exact",
-    "network": "solana-devnet"
+    "network": "solana-devnet",
     "extra": {
       "feePayer": "SolanaAddress"
     }

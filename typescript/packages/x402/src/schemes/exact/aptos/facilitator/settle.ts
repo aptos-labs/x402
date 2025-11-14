@@ -5,8 +5,12 @@ import {
   ExactAptosPayload,
 } from "../../../../types/verify";
 import { X402Config } from "../../../../types/config";
-import { AptosConnectedClient, getAptosRpcUrl } from "../../../../shared/aptos/wallet";
-import { Aptos, AptosConfig, Network as AptosNetwork } from "@aptos-labs/ts-sdk";
+import {
+  AptosConnectedClient,
+  getAptosNetwork,
+  getAptosRpcUrl,
+} from "../../../../shared/aptos/wallet";
+import { Aptos, AptosConfig } from "@aptos-labs/ts-sdk";
 import { deserializeAptosPayment } from "./utils";
 
 /**
@@ -38,15 +42,10 @@ export async function settle(
     const aptosPayload = payload.payload as ExactAptosPayload;
 
     // Map network to Aptos SDK network
-    const aptosNetwork =
-      paymentRequirements.network === "aptos-mainnet"
-        ? AptosNetwork.MAINNET
-        : paymentRequirements.network === "aptos-testnet"
-          ? AptosNetwork.TESTNET
-          : AptosNetwork.DEVNET;
+    const aptosNetwork = getAptosNetwork(paymentRequirements.network);
 
     // Create Aptos SDK instance
-    const rpcUrl = config?.aptosConfig?.rpcUrl || getAptosRpcUrl(paymentRequirements.network);
+    const rpcUrl = config?.aptosConfig?.rpcUrl || getAptosRpcUrl(aptosNetwork);
     const aptosConfig = new AptosConfig({
       network: aptosNetwork,
       fullnode: rpcUrl,
@@ -56,7 +55,7 @@ export async function settle(
     // Deserialize the transaction and authenticator
     const { transaction, senderAuthenticator } = deserializeAptosPayment(aptosPayload.transaction);
 
-    const senderAddress = transaction.rawTransaction.sender.toString();
+    const senderAddress = transaction.rawTransaction.sender.toStringLong();
 
     // Submit the transaction to the Aptos network
     console.log("Submitting transaction to Aptos network...");

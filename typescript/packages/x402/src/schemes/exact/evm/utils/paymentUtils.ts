@@ -1,9 +1,5 @@
 import { safeBase64Encode, safeBase64Decode } from "../../../../shared";
-import {
-  SupportedEVMNetworks,
-  SupportedSVMNetworks,
-  SupportedAptosNetworks,
-} from "../../../../types";
+import { SupportedEVMNetworks, SupportedSVMNetworks, isAptosNetwork } from "../../../../types";
 import {
   PaymentPayload,
   PaymentPayloadSchema,
@@ -46,7 +42,7 @@ export function encodePayment(payment: PaymentPayload): string {
   }
 
   // aptos
-  if (SupportedAptosNetworks.includes(payment.network)) {
+  if (isAptosNetwork(payment.network)) {
     safe = { ...payment, payload: payment.payload as ExactAptosPayload };
     return safeBase64Encode(JSON.stringify(safe));
   }

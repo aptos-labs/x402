@@ -1,11 +1,7 @@
 import { verify as verifyExactEvm, settle as settleExactEvm } from "../schemes/exact/evm";
 import { verify as verifyExactSvm, settle as settleExactSvm } from "../schemes/exact/svm";
 import { verify as verifyExactAptos, settle as settleExactAptos } from "../schemes/exact/aptos";
-import {
-  SupportedEVMNetworks,
-  SupportedSVMNetworks,
-  SupportedAptosNetworks,
-} from "../types/shared";
+import { SupportedEVMNetworks, SupportedSVMNetworks, isAptosNetwork } from "../types/shared";
 import { X402Config } from "../types/config";
 import {
   ConnectedClient as EvmConnectedClient,
@@ -21,7 +17,7 @@ import {
 } from "../types/verify";
 import { Chain, Transport, Account } from "viem";
 import { TransactionSigner } from "@solana/kit";
-import { AptosSigner, AptosConnectedClient } from "../shared/aptos/wallet";
+import { AptosConnectedClient } from "../shared/aptos/wallet";
 
 /**
  * Verifies a payment payload against the required payment details regardless of the scheme
@@ -65,7 +61,7 @@ export async function verify<
     }
 
     // aptos
-    if (SupportedAptosNetworks.includes(paymentRequirements.network)) {
+    if (isAptosNetwork(paymentRequirements.network)) {
       return await verifyExactAptos(
         client as AptosConnectedClient,
         payload,
@@ -123,7 +119,7 @@ export async function settle<transport extends Transport, chain extends Chain>(
     }
 
     // aptos
-    if (SupportedAptosNetworks.includes(paymentRequirements.network)) {
+    if (isAptosNetwork(paymentRequirements.network)) {
       return await settleExactAptos(
         client as AptosConnectedClient,
         payload,

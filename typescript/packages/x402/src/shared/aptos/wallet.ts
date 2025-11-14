@@ -5,13 +5,14 @@
  * in the x402 payment protocol.
  */
 
-import { Account, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
+import {
+  Account,
+  Ed25519PrivateKey,
+  Network as AptosNetwork,
+  NetworkToNodeAPI,
+} from "@aptos-labs/ts-sdk";
 import { Network } from "../../types/shared/network";
-
-/**
- * Aptos account type from the SDK
- */
-export type AptosAccount = Account;
+import { Signer } from "../../types";
 
 /**
  * Type alias for Aptos signer
@@ -24,7 +25,8 @@ export type AptosSigner = Account;
  * @param obj - The object to check
  * @returns True if the object is an Aptos signer
  */
-export function isAptosSigner(obj: any): obj is AptosSigner {
+export function isAptosSigner(obj: Signer): obj is AptosSigner {
+  // Must have a function named `.accountAddress()` and a function named `.signTransaction()`
   return (
     obj &&
     typeof obj === "object" &&
@@ -43,14 +45,28 @@ export function isAptosSigner(obj: any): obj is AptosSigner {
  * @returns An Aptos signer instance
  */
 export async function createSignerFromPrivateKey(privateKey: string): Promise<AptosSigner> {
-  // Normalize the private key (remove 0x prefix if present)
-  const normalizedKey = privateKey.startsWith("0x") ? privateKey.slice(2) : privateKey;
-
   // Create Ed25519 private key from hex string
-  const privateKeyBytes = new Ed25519PrivateKey(normalizedKey);
+  const privateKeyBytes = new Ed25519PrivateKey(privateKey);
 
   // Create and return Account
   return Account.fromPrivateKey({ privateKey: privateKeyBytes });
+}
+
+/**
+ * Gets the Aptos network identifier for the given network
+ *
+ * @param network - The network identifier
+ * @returns The Aptos network identifier
+ */
+export function getAptosNetwork(network: Network): AptosNetwork {
+  switch (network) {
+    case "aptos-mainnet":
+      return AptosNetwork.MAINNET;
+    case "aptos-testnet":
+      return AptosNetwork.TESTNET;
+    default:
+      throw new Error(`Unsupported Aptos network: ${network}`);
+  }
 }
 
 /**
@@ -59,17 +75,8 @@ export async function createSignerFromPrivateKey(privateKey: string): Promise<Ap
  * @param network - The network identifier
  * @returns The RPC URL for the network
  */
-export function getAptosRpcUrl(network: Network): string {
-  switch (network) {
-    case "aptos-mainnet":
-      return "https://fullnode.mainnet.aptoslabs.com/v1";
-    case "aptos-testnet":
-      return "https://fullnode.testnet.aptoslabs.com/v1";
-    case "aptos-devnet":
-      return "https://fullnode.devnet.aptoslabs.com/v1";
-    default:
-      throw new Error(`Unsupported Aptos network: ${network}`);
-  }
+export function getAptosRpcUrl(network: AptosNetwork): string {
+  return NetworkToNodeAPI[network];
 }
 
 /**
@@ -89,8 +96,9 @@ export interface AptosConnectedClient {
  * @returns An Aptos connected client instance
  */
 export function createAptosConnectedClient(network: Network): AptosConnectedClient {
+  const aptosNetwork = getAptosNetwork(network);
   return {
     network,
-    rpcUrl: getAptosRpcUrl(network),
+    rpcUrl: getAptosRpcUrl(aptosNetwork),
   };
 }
