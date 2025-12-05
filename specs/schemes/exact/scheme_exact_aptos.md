@@ -54,7 +54,7 @@ In addition to the standard x402 `PaymentRequirements` fields, the `exact` schem
 ```
 
 - `asset`: The metadata address of the fungible asset (e.g., USDC on Aptos mainnet: `0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b`)
-- `network`: One of `aptos-mainnet`, `aptos-testnet`, or `aptos-devnet`
+- `network`: One of `aptos-mainnet` or `aptos-testnet`
 - `extra.gasStation`: (Optional) URL of the gas station endpoint for sponsored transactions
 
 ## `X-PAYMENT` Header Payload
@@ -186,6 +186,8 @@ Aptos supports:
 
 - **Ed25519**: Single signature scheme (most common)
 - **MultiEd25519**: Multi-signature scheme for accounts requiring multiple signatures
+- **SingleKey**: Single signature scheme for accounts with a single key, either Ed25519, Secp256k1, or Secp256r1
+- **MultiKey**: Multi-signature scheme for accounts with multiple keys, either Ed25519, Secp256k1, or Secp256r1
 
 The facilitator must verify signatures according to the sender's authentication key and signature scheme.
 
@@ -205,7 +207,6 @@ Valid network identifiers:
 
 - `aptos-mainnet`: Mainnet (Chain ID: 1)
 - `aptos-testnet`: Testnet (Chain ID: 2)
-- `aptos-devnet`: Devnet (Chain ID: varies)
 
 ### Account Addresses
 
