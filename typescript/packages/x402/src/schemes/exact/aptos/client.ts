@@ -115,8 +115,7 @@ export async function createAndSignPayment(
   // Sign the transaction with authenticator (this returns AccountAuthenticator)
   const senderAuthenticator = client.signTransactionWithAuthenticator(transaction);
 
-  // Serialize the full SimpleTransaction (not just the raw transaction)
-  const transactionBytes = transaction.bcsToBytes();
+  const transactionBytes = transaction.rawTransaction.bcsToBytes();
 
   // Serialize the authenticator bytes
   const authenticatorBytes = senderAuthenticator.bcsToBytes();
