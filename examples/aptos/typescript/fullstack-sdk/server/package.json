@@ -1,0 +1,23 @@
+{
+  "name": "x402-aptos-demo-coinbase-server",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch index.ts",
+    "start": "tsx index.ts",
+    "format": "prettier --write \"*.ts\"",
+    "format:check": "prettier --check \"*.ts\"",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.14.0",
+    "axios": "^1.10.0",
+    "dotenv": "^16.4.5",
+    "hono": "^4.6.17"
+  },
+  "devDependencies": {
+    "prettier": "^3.7.4",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  }
+}

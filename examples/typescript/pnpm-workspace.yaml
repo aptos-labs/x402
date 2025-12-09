@@ -8,4 +8,6 @@ packages:
   - "mcp-embedded-wallet"
   - "mpc"
   - "discovery"
+  - "../aptos/typescript/*/client"
+  - "../aptos/typescript/*/server"
   - "../../typescript/packages/*"

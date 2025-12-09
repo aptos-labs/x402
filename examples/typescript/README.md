@@ -1,6 +1,10 @@
 # X402 TypeScript Examples
 
-This directory contains a collection of TypeScript examples demonstrating how to use the X402 protocol in various contexts. These examples are designed to work with the X402 npm packages and share a workspace with the main X402 packages.
+This directory contains a collection of TypeScript examples demonstrating how to use the X402 protocol with **EVM-based blockchains** (Ethereum, Base, etc.).
+
+**Looking for Aptos examples?** See [../aptos/](../aptos/) for Aptos-specific examples.
+
+These examples are designed to work with the X402 npm packages and share a workspace with the main X402 packages.
 
 ## Setup
 
