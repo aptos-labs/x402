@@ -53,16 +53,16 @@ export async function createSignerFromPrivateKey(privateKey: string): Promise<Ap
 }
 
 /**
- * Gets the Aptos network identifier for the given network
+ * Gets the Aptos network identifier for the given v2 CAIP-2 network format
  *
- * @param network - The network identifier
+ * @param network - The v2 CAIP-2 network identifier (aptos:1 or aptos:2)
  * @returns The Aptos network identifier
  */
 export function getAptosNetwork(network: Network): AptosNetwork {
   switch (network) {
-    case "aptos-mainnet":
+    case "aptos:1":
       return AptosNetwork.MAINNET;
-    case "aptos-testnet":
+    case "aptos:2":
       return AptosNetwork.TESTNET;
     default:
       throw new Error(`Unsupported Aptos network: ${network}`);
