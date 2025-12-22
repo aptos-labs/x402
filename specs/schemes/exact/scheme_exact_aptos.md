@@ -8,14 +8,6 @@ The `exact` scheme on Aptos transfers a specific amount of a fungible asset (suc
 
 **Current Implementation:** Uses the standard Aptos account transfer function for simplicity.
 
-**Future Enhancement:** Will be upgraded to use a custom x402 payment contract that:
-
-1. Validates the exact payment amount matches the requirement
-2. Emits a `PaymentMade` event containing an invoice ID, amount, recipient, and asset
-3. Transfers the fungible asset from payer to recipient
-
-The contract-based approach will ensure payments can be uniquely identified and verified on-chain by the invoice ID, preventing confusion between x402 payments and regular transfers.
-
 ## Protocol Sequencing
 
 The following sequence outlines the flow of the `exact` scheme on Aptos:
@@ -41,6 +33,8 @@ X402 v2 uses CAIP-2 format for network identifiers:
 - **Testnet:** `aptos:2` (CAIP-2 format using Aptos chain ID 2)
 
 ## `PaymentRequirements` for `exact`
+
+In addition to the standard x402 `PaymentRequirements` fields, the `exact` scheme on Aptos requires the following:
 
 ```json
 {
@@ -73,8 +67,10 @@ The client constructs the payment payload and includes it in the `X-PAYMENT` hea
 ```json
 {
   "x402Version": 2,
-  "payload": {
-    "transaction": "AQDy8fLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vIC..."
+  "resource": {
+    "url": "https://example.com/weather",
+    "description": "Access to protected content",
+    "mimeType": "application/json"
   },
   "accepted": {
     "scheme": "exact",
@@ -83,6 +79,9 @@ The client constructs the payment payload and includes it in the `X-PAYMENT` hea
     "asset": "0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b",
     "payTo": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
     "maxTimeoutSeconds": 60
+  },
+  "payload": {
+    "transaction": "AQDy8fLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vIC..."
   }
 }
 ```
@@ -90,8 +89,12 @@ The client constructs the payment payload and includes it in the `X-PAYMENT` hea
 ### Field Descriptions
 
 - `x402Version`: Always `2` for this specification
-- `payload.transaction`: Base64 encoded BCS-serialized signed Aptos transaction (includes the signature embedded within the transaction structure)
+- `resource`: Information about the protected resource being accessed
+  - `url`: The protected resource URL
+  - `description`: Human-readable description of the resource
+  - `mimeType`: Expected MIME type of the resource response
 - `accepted`: The `PaymentRequirements` that the client is fulfilling with this payment
+- `payload.transaction`: Base64 encoded BCS-serialized signed Aptos transaction (includes the signature embedded within the transaction structure)
 
 ## Verification
 
