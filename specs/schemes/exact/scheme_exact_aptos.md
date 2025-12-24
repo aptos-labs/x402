@@ -4,9 +4,15 @@
 
 The `exact` scheme on Aptos transfers a specific amount of a fungible asset (such as APT or stablecoins like USDC) from the payer to the resource server using the Aptos fungible asset transfer function (`0x1::primary_fungible_store::transfer`). The approach requires the payer to construct a complete signed transaction ensuring that the facilitator cannot alter the transaction or redirect funds to any address other than the one specified by the resource server in paymentRequirements.
 
-**Version Support:** This specification supports x402 v2 protocol only.
-
 **Current Implementation:** Uses the standard Aptos account transfer function for simplicity.
+
+**Future Enhancement:** Will be upgraded to use a custom x402 payment contract that:
+
+1. Validates the exact payment amount matches the requirement
+2. Emits a `PaymentMade` event containing an invoice ID, amount, recipient, and asset
+3. Transfers the fungible asset from payer to recipient
+
+The contract-based approach will ensure payments can be uniquely identified and verified on-chain by the invoice ID, preventing confusion between x402 payments and regular transfers.
 
 ## Protocol Sequencing
 
@@ -25,13 +31,6 @@ The following sequence outlines the flow of the `exact` scheme on Aptos:
 11. `facilitator` submits the transaction to the `Aptos` network for execution and reports back to the `resource server` the result of the transaction.
 12. `resource server` returns the response to the client.
 
-## Network Format
-
-X402 v2 uses CAIP-2 format for network identifiers:
-
-- **Mainnet:** `aptos:1` (CAIP-2 format using Aptos chain ID 1)
-- **Testnet:** `aptos:2` (CAIP-2 format using Aptos chain ID 2)
-
 ## `PaymentRequirements` for `exact`
 
 In addition to the standard x402 `PaymentRequirements` fields, the `exact` scheme on Aptos requires the following:
@@ -39,78 +38,65 @@ In addition to the standard x402 `PaymentRequirements` fields, the `exact` schem
 ```json
 {
   "scheme": "exact",
-  "network": "aptos:1",
-  "amount": "1000000",
+  "network": "aptos-mainnet",
+  "maxAmountRequired": "1000000",
   "asset": "0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b",
   "payTo": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+  "resource": "https://example.com/weather",
+  "description": "Access to protected content",
+  "mimeType": "application/json",
   "maxTimeoutSeconds": 60,
+  "outputSchema": null,
   "extra": {
     "gasStation": "https://facilitator.example.com/gas-station"
   }
 }
 ```
 
-### Field Descriptions
-
-- `scheme`: Always `"exact"` for this scheme
-- `network`: CAIP-2 network identifier - `aptos:1` (mainnet) or `aptos:2` (testnet)
-- `amount`: The exact amount to transfer in atomic units (e.g., `"1000000"` = 1 APT)
 - `asset`: The metadata address of the fungible asset (e.g., USDC on Aptos mainnet: `0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b`)
-- `payTo`: The recipient address (32-byte hex string with `0x` prefix)
-- `maxTimeoutSeconds`: Maximum time in seconds before the payment expires
+- `network`: One of `aptos-mainnet` or `aptos-testnet`
 - `extra.gasStation`: (Optional) URL of the gas station endpoint for sponsored transactions
 
 ## `X-PAYMENT` Header Payload
 
-The client constructs the payment payload and includes it in the `X-PAYMENT` header. The payload structure follows x402 v2 format:
+The `payload` field of the `X-PAYMENT` header must contain the following fields:
+
+- `transaction`: The Base64 encoded BCS-serialized signed Aptos transaction (includes the signature embedded within the transaction structure).
+
+Example:
 
 ```json
 {
-  "x402Version": 2,
-  "resource": {
-    "url": "https://example.com/weather",
-    "description": "Access to protected content",
-    "mimeType": "application/json"
-  },
-  "accepted": {
-    "scheme": "exact",
-    "network": "aptos:1",
-    "amount": "1000000",
-    "asset": "0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b",
-    "payTo": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-    "maxTimeoutSeconds": 60
-  },
+  "transaction": "AQDy8fLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vIC..."
+}
+```
+
+Full `X-PAYMENT` header:
+
+```json
+{
+  "x402Version": 1,
+  "scheme": "exact",
+  "network": "aptos-mainnet",
   "payload": {
     "transaction": "AQDy8fLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vIC..."
   }
 }
 ```
 
-### Field Descriptions
-
-- `x402Version`: Always `2` for this specification
-- `resource`: Information about the protected resource being accessed
-  - `url`: The protected resource URL
-  - `description`: Human-readable description of the resource
-  - `mimeType`: Expected MIME type of the resource response
-- `accepted`: The `PaymentRequirements` that the client is fulfilling with this payment
-- `payload.transaction`: Base64 encoded BCS-serialized signed Aptos transaction (includes the signature embedded within the transaction structure)
-
 ## Verification
 
 Steps to verify a payment for the `exact` scheme:
 
-1. **Extract requirements**: Use `payload.accepted` to get the payment requirements being fulfilled.
-2. Verify `x402Version` is `2`.
-3. Verify the network matches the agreed upon chain (CAIP-2 format: `aptos:1` or `aptos:2`).
-4. Deserialize the BCS-encoded transaction and verify the signature is valid.
-5. Verify the transaction sender has sufficient balance of the `asset` to cover the required amount.
-6. Verify the transaction contains a fungible asset transfer operation (`0x1::primary_fungible_store::transfer`).
-7. Verify the transfer is for the correct asset (matching `requirements.asset`).
-8. Verify the transfer amount matches `requirements.amount`.
-9. Verify the transfer recipient matches `requirements.payTo`.
-10. Simulate the transaction using the Aptos REST API to ensure it would succeed and has not already been executed/committed to the chain.
-11. Verify the transaction has not expired (check sequence number and expiration timestamp). Note: A buffer time should be considered to account for network propagation delays and processing time.
+1. Verify the network is for the agreed upon chain.
+2. Deserialize the BCS-encoded transaction and verify the signature is valid.
+3. Verify the transaction sender has sufficient balance of the `asset` to cover `paymentRequirements.maxAmountRequired`.
+4. Verify the transaction contains a fungible asset transfer operation.
+5. Verify the transfer is for the correct asset (matching `paymentRequirements.asset`).
+6. Verify the transfer amount matches `paymentRequirements.maxAmountRequired`.
+7. Verify the transfer recipient matches `paymentRequirements.payTo`.
+8. Simulate the transaction using the Aptos REST API to ensure it would succeed and has not already been executed/committed to the chain.
+9. Verify the transaction has not expired (check sequence number and expiration timestamp). Note: A buffer time should be considered to account for network propagation delays and processing time.
 
 ## Settlement
 
@@ -137,7 +123,7 @@ Once decoded, the `X-PAYMENT-RESPONSE` is a JSON string with the following prope
 {
   "success": true,
   "transaction": "0x1a2b3c4d5e6f7890abcdef1234567890abcdef1234567890abcdef1234567890",
-  "network": "aptos:1",
+  "network": "aptos-mainnet",
   "version": "12345678"
 }
 ```
@@ -192,7 +178,7 @@ Where:
 
 - `from`: The fungible asset metadata object (e.g., USDC metadata address)
 - `to`: The resource server's address
-- `amount`: The exact amount specified in `paymentRequirements.amount`
+- `amount`: The exact amount specified in `paymentRequirements.maxAmountRequired`
 
 ### Signature Schemes
 
@@ -217,10 +203,10 @@ All Aptos transactions are serialized using BCS (Binary Canonical Serialization)
 
 ### Network Identifiers
 
-CAIP-2 format is used for network identifiers:
+Valid network identifiers:
 
-- `aptos:1`: Mainnet (Chain ID: 1)
-- `aptos:2`: Testnet (Chain ID: 2)
+- `aptos-mainnet`: Mainnet (Chain ID: 1)
+- `aptos-testnet`: Testnet (Chain ID: 2)
 
 ### Account Addresses
 
@@ -228,9 +214,9 @@ Aptos account addresses are 32-byte hex strings, represented with a `0x` prefix.
 
 Example: `0x0000000000000000000000000000000000000000000000000000000000000001` (64 hex characters)
 
-## Recommendation
+### Recommendation
 
-- Use the spec defined above and only support payments of specific amounts.
+- Use the spec defined above for the first version of the protocol and only support payments of specific amounts.
 - Support both non-sponsored (client pays gas) and sponsored (facilitator pays gas) transaction modes.
 - For sponsored transactions, implement the gas station protocol to enable gasless payments for clients.
 - Leverage the Aptos TypeScript SDK for transaction construction, serialization, and simulation.
