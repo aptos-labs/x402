@@ -42,8 +42,10 @@ export async function verify(
   try {
     const aptosPayload = payload.payload as ExactAptosPayload;
 
+    const requirements = payload.accepted || paymentRequirements;
+
     // Map network to Aptos SDK network
-    const aptosNetwork = getAptosNetwork(paymentRequirements.network);
+    const aptosNetwork = getAptosNetwork(requirements.network);
 
     // Create Aptos SDK instance
     const rpcUrl = config?.aptosConfig?.rpcUrl || getAptosRpcUrl(aptosNetwork);
@@ -118,8 +120,8 @@ export async function verify(
     const [faAddressArg, recipientAddressArg, amountArg] = args;
 
     const faAddress = AccountAddress.from(faAddressArg.bcsToBytes());
-    console.log("FA Address:", faAddress, "Expected:", paymentRequirements.asset);
-    const asset = AccountAddress.from(paymentRequirements.asset);
+    console.log("FA Address:", faAddress, "Expected:", requirements.asset);
+    const asset = AccountAddress.from(requirements.asset);
     if (!faAddress.equals(asset)) {
       console.log("Invalid asset");
       return {
@@ -130,8 +132,8 @@ export async function verify(
     }
 
     const recipientAddress = AccountAddress.from(recipientAddressArg.bcsToBytes());
-    console.log("Recipient:", recipientAddress, "Expected:", paymentRequirements.payTo);
-    const payTo = AccountAddress.from(paymentRequirements.payTo);
+    console.log("Recipient:", recipientAddress, "Expected:", requirements.payTo);
+    const payTo = AccountAddress.from(requirements.payTo);
     if (!recipientAddress.equals(payTo)) {
       console.log("Invalid recipient");
       return {
@@ -144,8 +146,8 @@ export async function verify(
     // Parse amount from a byte array (little-endian u64)
     const amount = new Deserializer(amountArg.bcsToBytes()).deserializeU64().toString(10);
 
-    console.log("Amount:", amount, "Expected:", paymentRequirements.maxAmountRequired);
-    if (amount !== paymentRequirements.maxAmountRequired) {
+    console.log("Amount:", amount, "Expected:", requirements.amount);
+    if (amount !== requirements.amount) {
       console.log("Invalid amount");
       return {
         isValid: false,

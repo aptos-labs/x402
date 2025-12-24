@@ -41,8 +41,10 @@ export async function settle(
   try {
     const aptosPayload = payload.payload as ExactAptosPayload;
 
+    const requirements = payload.accepted || paymentRequirements;
+
     // Map network to Aptos SDK network
-    const aptosNetwork = getAptosNetwork(paymentRequirements.network);
+    const aptosNetwork = getAptosNetwork(requirements.network);
 
     // Create Aptos SDK instance
     const rpcUrl = config?.aptosConfig?.rpcUrl || getAptosRpcUrl(aptosNetwork);
@@ -77,7 +79,7 @@ export async function settle(
     return {
       success: true,
       transaction: pendingTxn.hash,
-      network: paymentRequirements.network,
+      network: requirements.network,
       payer: senderAddress,
     };
   } catch (error) {
@@ -86,7 +88,7 @@ export async function settle(
       success: false,
       errorReason: "unexpected_settle_error",
       transaction: "",
-      network: paymentRequirements.network,
+      network: requirements.network,
       payer: undefined,
     };
   }
