@@ -74,11 +74,12 @@ export async function createAndSignPayment(
   if (!paymentRequirements.payTo.match(AptosAddressRegex)) {
     throw new Error("Invalid pay-to address");
   }
-  if (!paymentRequirements.maxAmountRequired) {
-    throw new Error("Max amount required is required");
+
+  if (!paymentRequirements.amount) {
+    throw new Error("Amount is required");
   }
-  if (!paymentRequirements.maxAmountRequired.match(/^[0-9]+$/)) {
-    throw new Error("Max amount required must be a number");
+  if (!paymentRequirements.amount.match(/^[0-9]+$/)) {
+    throw new Error("Amount must be a number");
   }
 
   // Check for sponsored transaction (gas station protocol)
@@ -107,7 +108,7 @@ export async function createAndSignPayment(
       functionArguments: [
         paymentRequirements.asset, // Asset address to transfer
         paymentRequirements.payTo, // recipient address
-        paymentRequirements.maxAmountRequired, // amount to transfer in subunits (e.g. 100000000 == 1 APT)
+        paymentRequirements.amount, // amount to transfer in subunits (e.g. 100000000 == 1 APT)
       ],
     },
   });
@@ -132,8 +133,6 @@ export async function createAndSignPayment(
 
   return {
     x402Version,
-    scheme: paymentRequirements.scheme,
-    network: paymentRequirements.network,
     payload: {
       transaction: base64Transaction,
     },
