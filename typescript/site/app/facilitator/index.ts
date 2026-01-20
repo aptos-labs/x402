@@ -1,4 +1,4 @@
-import { Account, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
+import { Account, Ed25519PrivateKey, PrivateKey } from "@aptos-labs/ts-sdk";
 import { base58 } from "@scure/base";
 import { createKeyPairSignerFromBytes } from "@solana/kit";
 import { toFacilitatorAptosSigner } from "@x402/aptos";
@@ -95,10 +95,12 @@ async function createFacilitator(): Promise<x402Facilitator> {
   // Initialize SVM signer - handles all Solana networks with automatic RPC creation
   const svmSigner = toFacilitatorSvmSigner(svmAccount);
 
-  // Initialize Aptos account from private key (hex format with 0x prefix)
-  const aptosPrivateKey = new Ed25519PrivateKey(
+  // Initialize Aptos account from private key (format to AIP-80 compliant format)
+  const formattedAptosKey = PrivateKey.formatPrivateKey(
     process.env.FACILITATOR_APTOS_PRIVATE_KEY as string,
+    "ed25519",
   );
+  const aptosPrivateKey = new Ed25519PrivateKey(formattedAptosKey);
   const aptosAccount = Account.fromPrivateKey({ privateKey: aptosPrivateKey });
 
   // Initialize Aptos signer - handles all Aptos networks with automatic RPC creation
