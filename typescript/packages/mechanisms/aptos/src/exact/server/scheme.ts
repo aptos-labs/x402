@@ -1,5 +1,6 @@
 import type {
   AssetAmount,
+  Money,
   MoneyParser,
   Network,
   PaymentRequirements,
@@ -69,7 +70,9 @@ export class ExactAptosScheme implements SchemeNetworkServer {
     }
 
     // Parse Money to decimal number
-    const amount = this.parseMoneyToDecimal(price);
+    // TypeScript doesn't narrow the type after the early return above,
+    // so we need to assert that price is Money here
+    const amount = this.parseMoneyToDecimal(price as Money);
 
     // Try each custom money parser in order
     for (const parser of this.moneyParsers) {
