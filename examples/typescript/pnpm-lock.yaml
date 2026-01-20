@@ -1022,8 +1022,8 @@ importers:
   ../../typescript/packages/mechanisms/aptos:
     dependencies:
       '@aptos-labs/ts-sdk':
-        specifier: ^1.35.0
-        version: 1.39.0(axios@1.13.2)(got@11.8.6)
+        specifier: ^5.2.1
+        version: 5.2.1(got@11.8.6)
       '@x402/core':
         specifier: workspace:*
         version: link:../../core
@@ -2907,21 +2907,14 @@ packages:
     resolution: {integrity: sha512-sB7CokCM6s76SLJmccysbnFR+MDik6udKfj2+9ZsmTLV0/t73veIeCDKbvWJmbW267ibx4HiGbPI7L+1+yjEbQ==}
     hasBin: true
 
-  '@aptos-labs/aptos-client@1.2.0':
-    resolution: {integrity: sha512-pBlIAT/W+Qa0TOr/318U8r0Gxw/jfyRLcvDGMEXgcVrPqO9Qhwsmozw6LPPIZ963FB7smwIaMeexWFDs3zijcg==}
-    engines: {node: '>=15.10.0'}
+  '@aptos-labs/aptos-client@2.1.0':
+    resolution: {integrity: sha512-ttdY0qclRvbYAAwzijkFeipuqTfLFJnoXlNIm58tIw3DKhIlfYdR6iLqTeCpI23oOPghnO99FZecej/0MTrtuA==}
+    engines: {node: '>=20.0.0'}
     peerDependencies:
-      axios: ^1.8.4
       got: ^11.8.6
 
-  '@aptos-labs/aptos-dynamic-transaction-composer@0.1.4':
-    resolution: {integrity: sha512-ebsNJIntwcdaf5UTr9zivI/iS+b51BpDlQznKfsSPbOoEybHMlf0GjylKWpD0lktZydlLRoZxBlxCzAJAIr0VA==}
-
-  '@aptos-labs/script-composer-pack@0.0.9':
-    resolution: {integrity: sha512-Y3kA1rgF65HETgoTn2omDymsgO+fnZouPLrKJZ9sbxTGdOekIIHtGee3A2gk84eCqa02ZKBumZmP+IDCXRtU/g==}
-
-  '@aptos-labs/ts-sdk@1.39.0':
-    resolution: {integrity: sha512-VFEWZsqb8Mto8XbLK8lDRdUvyHjp+geiwFxRzRcQK6HftMGB4bYuEsOI2Vy6u/TqkUft8DvmpV5yX027R5/SMQ==}
+  '@aptos-labs/ts-sdk@5.2.1':
+    resolution: {integrity: sha512-kazYjqfsPCBx2UJI+nYUOb6Ov7q7brSgYEfxp2sP27IeJWdDNa50lfs0WIpDJ92kQxdtlm9q3ZWw7Toh9f1gxQ==}
     engines: {node: '>=20.0.0'}
 
   '@asamuzakjp/css-color@3.2.0':
@@ -12530,33 +12523,23 @@ snapshots:
     dependencies:
       commander: 12.1.0
 
-  '@aptos-labs/aptos-client@1.2.0(axios@1.13.2)(got@11.8.6)':
+  '@aptos-labs/aptos-client@2.1.0(got@11.8.6)':
     dependencies:
-      axios: 1.13.2
       got: 11.8.6
 
-  '@aptos-labs/aptos-dynamic-transaction-composer@0.1.4': {}
-
-  '@aptos-labs/script-composer-pack@0.0.9':
-    dependencies:
-      '@aptos-labs/aptos-dynamic-transaction-composer': 0.1.4
-
-  '@aptos-labs/ts-sdk@1.39.0(axios@1.13.2)(got@11.8.6)':
+  '@aptos-labs/ts-sdk@5.2.1(got@11.8.6)':
     dependencies:
       '@aptos-labs/aptos-cli': 1.1.1
-      '@aptos-labs/aptos-client': 1.2.0(axios@1.13.2)(got@11.8.6)
-      '@aptos-labs/script-composer-pack': 0.0.9
+      '@aptos-labs/aptos-client': 2.1.0(got@11.8.6)
       '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       eventemitter3: 5.0.1
-      form-data: 4.0.4
       js-base64: 3.7.8
       jwt-decode: 4.0.0
       poseidon-lite: 0.2.1
     transitivePeerDependencies:
-      - axios
       - got
 
   '@asamuzakjp/css-color@3.2.0':
