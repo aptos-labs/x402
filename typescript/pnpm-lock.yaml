@@ -196,7 +196,7 @@ importers:
         version: 1.36.1(bufferutil@4.0.9)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)(utf-8-validate@5.0.10)
       '@solana/kit':
         specifier: ^2.1.1
-        version: 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)(ws@8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+        version: 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@x402/core':
         specifier: workspace:^
         version: link:../../core
@@ -1025,8 +1025,8 @@ importers:
   packages/mechanisms/aptos:
     dependencies:
       '@aptos-labs/ts-sdk':
-        specifier: ^1.35.0
-        version: 1.39.0(axios@1.11.0)(got@11.8.6)
+        specifier: ^5.2.1
+        version: 5.2.1(got@11.8.6)
       '@x402/core':
         specifier: workspace:*
         version: link:../../core
@@ -1328,21 +1328,14 @@ packages:
     resolution: {integrity: sha512-sB7CokCM6s76SLJmccysbnFR+MDik6udKfj2+9ZsmTLV0/t73veIeCDKbvWJmbW267ibx4HiGbPI7L+1+yjEbQ==}
     hasBin: true
 
-  '@aptos-labs/aptos-client@1.2.0':
-    resolution: {integrity: sha512-pBlIAT/W+Qa0TOr/318U8r0Gxw/jfyRLcvDGMEXgcVrPqO9Qhwsmozw6LPPIZ963FB7smwIaMeexWFDs3zijcg==}
-    engines: {node: '>=15.10.0'}
+  '@aptos-labs/aptos-client@2.1.0':
+    resolution: {integrity: sha512-ttdY0qclRvbYAAwzijkFeipuqTfLFJnoXlNIm58tIw3DKhIlfYdR6iLqTeCpI23oOPghnO99FZecej/0MTrtuA==}
+    engines: {node: '>=20.0.0'}
     peerDependencies:
-      axios: ^1.8.4
       got: ^11.8.6
 
-  '@aptos-labs/aptos-dynamic-transaction-composer@0.1.4':
-    resolution: {integrity: sha512-ebsNJIntwcdaf5UTr9zivI/iS+b51BpDlQznKfsSPbOoEybHMlf0GjylKWpD0lktZydlLRoZxBlxCzAJAIr0VA==}
-
-  '@aptos-labs/script-composer-pack@0.0.9':
-    resolution: {integrity: sha512-Y3kA1rgF65HETgoTn2omDymsgO+fnZouPLrKJZ9sbxTGdOekIIHtGee3A2gk84eCqa02ZKBumZmP+IDCXRtU/g==}
-
-  '@aptos-labs/ts-sdk@1.39.0':
-    resolution: {integrity: sha512-VFEWZsqb8Mto8XbLK8lDRdUvyHjp+geiwFxRzRcQK6HftMGB4bYuEsOI2Vy6u/TqkUft8DvmpV5yX027R5/SMQ==}
+  '@aptos-labs/ts-sdk@5.2.1':
+    resolution: {integrity: sha512-kazYjqfsPCBx2UJI+nYUOb6Ov7q7brSgYEfxp2sP27IeJWdDNa50lfs0WIpDJ92kQxdtlm9q3ZWw7Toh9f1gxQ==}
     engines: {node: '>=20.0.0'}
 
   '@asamuzakjp/css-color@4.1.1':
@@ -7725,33 +7718,23 @@ snapshots:
     dependencies:
       commander: 12.1.0
 
-  '@aptos-labs/aptos-client@1.2.0(axios@1.11.0)(got@11.8.6)':
+  '@aptos-labs/aptos-client@2.1.0(got@11.8.6)':
     dependencies:
-      axios: 1.11.0
       got: 11.8.6
 
-  '@aptos-labs/aptos-dynamic-transaction-composer@0.1.4': {}
-
-  '@aptos-labs/script-composer-pack@0.0.9':
-    dependencies:
-      '@aptos-labs/aptos-dynamic-transaction-composer': 0.1.4
-
-  '@aptos-labs/ts-sdk@1.39.0(axios@1.11.0)(got@11.8.6)':
+  '@aptos-labs/ts-sdk@5.2.1(got@11.8.6)':
     dependencies:
       '@aptos-labs/aptos-cli': 1.1.1
-      '@aptos-labs/aptos-client': 1.2.0(axios@1.11.0)(got@11.8.6)
-      '@aptos-labs/script-composer-pack': 0.0.9
+      '@aptos-labs/aptos-client': 2.1.0(got@11.8.6)
       '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       eventemitter3: 5.0.1
-      form-data: 4.0.4
       js-base64: 3.7.8
       jwt-decode: 4.0.0
       poseidon-lite: 0.2.1
     transitivePeerDependencies:
-      - axios
       - got
 
   '@asamuzakjp/css-color@4.1.1':
@@ -10466,6 +10449,31 @@ snapshots:
     transitivePeerDependencies:
       - fastestsmallesttextencoderdecoder
 
+  '@solana/kit@2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
+    dependencies:
+      '@solana/accounts': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      '@solana/addresses': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      '@solana/codecs': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      '@solana/errors': 2.3.0(typescript@5.9.2)
+      '@solana/functional': 2.3.0(typescript@5.9.2)
+      '@solana/instructions': 2.3.0(typescript@5.9.2)
+      '@solana/keys': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      '@solana/programs': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      '@solana/rpc': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      '@solana/rpc-parsed-types': 2.3.0(typescript@5.9.2)
+      '@solana/rpc-spec-types': 2.3.0(typescript@5.9.2)
+      '@solana/rpc-subscriptions': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@solana/rpc-types': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      '@solana/signers': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      '@solana/sysvars': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      '@solana/transaction-confirmation': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@solana/transaction-messages': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      '@solana/transactions': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      typescript: 5.9.2
+    transitivePeerDependencies:
+      - fastestsmallesttextencoderdecoder
+      - ws
+
   '@solana/kit@2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
     dependencies:
       '@solana/accounts': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
@@ -10807,6 +10815,15 @@ snapshots:
     transitivePeerDependencies:
       - fastestsmallesttextencoderdecoder
 
+  '@solana/rpc-subscriptions-channel-websocket@2.3.0(typescript@5.9.2)(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
+    dependencies:
+      '@solana/errors': 2.3.0(typescript@5.9.2)
+      '@solana/functional': 2.3.0(typescript@5.9.2)
+      '@solana/rpc-subscriptions-spec': 2.3.0(typescript@5.9.2)
+      '@solana/subscribable': 2.3.0(typescript@5.9.2)
+      typescript: 5.9.2
+      ws: 7.5.10(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+
   '@solana/rpc-subscriptions-channel-websocket@2.3.0(typescript@5.9.2)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
     dependencies:
       '@solana/errors': 2.3.0(typescript@5.9.2)
@@ -10867,6 +10884,24 @@ snapshots:
       '@solana/rpc-spec-types': 5.1.0(typescript@5.9.2)
       '@solana/subscribable': 5.1.0(typescript@5.9.2)
       typescript: 5.9.2
+
+  '@solana/rpc-subscriptions@2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
+    dependencies:
+      '@solana/errors': 2.3.0(typescript@5.9.2)
+      '@solana/fast-stable-stringify': 2.3.0(typescript@5.9.2)
+      '@solana/functional': 2.3.0(typescript@5.9.2)
+      '@solana/promises': 2.3.0(typescript@5.9.2)
+      '@solana/rpc-spec-types': 2.3.0(typescript@5.9.2)
+      '@solana/rpc-subscriptions-api': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      '@solana/rpc-subscriptions-channel-websocket': 2.3.0(typescript@5.9.2)(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@solana/rpc-subscriptions-spec': 2.3.0(typescript@5.9.2)
+      '@solana/rpc-transformers': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      '@solana/rpc-types': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      '@solana/subscribable': 2.3.0(typescript@5.9.2)
+      typescript: 5.9.2
+    transitivePeerDependencies:
+      - fastestsmallesttextencoderdecoder
+      - ws
 
   '@solana/rpc-subscriptions@2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
     dependencies:
@@ -11196,6 +11231,23 @@ snapshots:
       typescript: 5.9.2
     transitivePeerDependencies:
       - fastestsmallesttextencoderdecoder
+
+  '@solana/transaction-confirmation@2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
+    dependencies:
+      '@solana/addresses': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      '@solana/codecs-strings': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      '@solana/errors': 2.3.0(typescript@5.9.2)
+      '@solana/keys': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      '@solana/promises': 2.3.0(typescript@5.9.2)
+      '@solana/rpc': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      '@solana/rpc-subscriptions': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@solana/rpc-types': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      '@solana/transaction-messages': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      '@solana/transactions': 2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)
+      typescript: 5.9.2
+    transitivePeerDependencies:
+      - fastestsmallesttextencoderdecoder
+      - ws
 
   '@solana/transaction-confirmation@2.3.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
     dependencies:
