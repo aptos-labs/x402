@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "@x402/core": "workspace:*",
-    "@aptos-labs/ts-sdk": "^1.35.0"
+    "@aptos-labs/ts-sdk": "^5.2.1"
   },
   "exports": {
     ".": {
