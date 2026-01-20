@@ -1204,6 +1204,9 @@ importers:
 
   site:
     dependencies:
+      '@aptos-labs/ts-sdk':
+        specifier: ^5.2.1
+        version: 5.2.1(got@11.8.6)
       '@coinbase/cdp-sdk':
         specifier: ^1.22.0
         version: 1.36.1(bufferutil@4.0.9)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.2)(utf-8-validate@5.0.10)
@@ -1219,6 +1222,9 @@ importers:
       '@vercel/functions':
         specifier: ^2.2.8
         version: 2.2.13
+      '@x402/aptos':
+        specifier: workspace:*
+        version: link:../packages/mechanisms/aptos
       '@x402/core':
         specifier: workspace:*
         version: link:../packages/core
