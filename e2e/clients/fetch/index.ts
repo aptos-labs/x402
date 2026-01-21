@@ -4,7 +4,7 @@ import { privateKeyToAccount } from "viem/accounts";
 import { registerExactEvmScheme } from "@x402/evm/exact/client";
 import { registerExactSvmScheme } from "@x402/svm/exact/client";
 import { registerExactAptosScheme } from "@x402/aptos/exact/client";
-import { Account, Ed25519PrivateKey, PrivateKey } from "@aptos-labs/ts-sdk";
+import { Account, Ed25519PrivateKey, PrivateKey, PrivateKeyVariants } from "@aptos-labs/ts-sdk";
 import { base58 } from "@scure/base";
 import { createKeyPairSignerFromBytes } from "@solana/kit";
 import { x402Client, x402HTTPClient } from "@x402/core/client";
@@ -20,7 +20,7 @@ const svmSigner = await createKeyPairSignerFromBytes(base58.decode(process.env.S
 // Initialize Aptos signer if key is provided
 let aptosAccount: Account | undefined;
 if (process.env.APTOS_PRIVATE_KEY) {
-  const formattedKey = PrivateKey.formatPrivateKey(process.env.APTOS_PRIVATE_KEY, 'ed25519');
+  const formattedKey = PrivateKey.formatPrivateKey(process.env.APTOS_PRIVATE_KEY, PrivateKeyVariants.Ed25519);
   const aptosPrivateKey = new Ed25519PrivateKey(formattedKey);
   aptosAccount = Account.fromPrivateKey({ privateKey: aptosPrivateKey });
 }
