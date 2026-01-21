@@ -1,4 +1,4 @@
-import { Account, Ed25519PrivateKey, PrivateKey } from "@aptos-labs/ts-sdk";
+import { Account, Ed25519PrivateKey, PrivateKey, PrivateKeyVariants } from "@aptos-labs/ts-sdk";
 import { base58 } from "@scure/base";
 import { createKeyPairSignerFromBytes } from "@solana/kit";
 import { toFacilitatorAptosSigner } from "@x402/aptos";
@@ -98,7 +98,7 @@ async function createFacilitator(): Promise<x402Facilitator> {
   // Initialize Aptos account from private key (format to AIP-80 compliant format)
   const formattedAptosKey = PrivateKey.formatPrivateKey(
     process.env.FACILITATOR_APTOS_PRIVATE_KEY as string,
-    "ed25519",
+    PrivateKeyVariants.Ed25519,
   );
   const aptosPrivateKey = new Ed25519PrivateKey(formattedAptosKey);
   const aptosAccount = Account.fromPrivateKey({ privateKey: aptosPrivateKey });

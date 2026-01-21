@@ -11,7 +11,7 @@
  * - Discovery resource cataloging
  */
 
-import { Account, Ed25519PrivateKey, PrivateKey } from "@aptos-labs/ts-sdk";
+import { Account, Ed25519PrivateKey, PrivateKey, PrivateKeyVariants } from "@aptos-labs/ts-sdk";
 import { base58 } from "@scure/base";
 import { createKeyPairSignerFromBytes } from "@solana/kit";
 import { toFacilitatorAptosSigner } from "@x402/aptos";
@@ -91,7 +91,7 @@ const svmAccount = await createKeyPairSignerFromBytes(base58.decode(process.env.
 console.info(`SVM Facilitator account: ${svmAccount.address}`);
 
 // Initialize the Aptos account from private key (format to AIP-80 compliant format)
-const formattedAptosKey = PrivateKey.formatPrivateKey(process.env.APTOS_PRIVATE_KEY as string, 'ed25519');
+const formattedAptosKey = PrivateKey.formatPrivateKey(process.env.APTOS_PRIVATE_KEY as string, PrivateKeyVariants.Ed25519);
 const aptosPrivateKey = new Ed25519PrivateKey(formattedAptosKey);
 const aptosAccount = Account.fromPrivateKey({ privateKey: aptosPrivateKey });
 console.info(`Aptos Facilitator account: ${aptosAccount.accountAddress.toStringLong()}`);
