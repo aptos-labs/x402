@@ -17,7 +17,6 @@ export interface AptosFacilitatorConfig {
    * Examples: "aptos:1" (mainnet), "aptos:2" (testnet), ["aptos:1", "aptos:2"]
    */
   networks: Network | Network[];
-
 }
 
 /**
