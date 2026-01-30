@@ -68,6 +68,13 @@ registerExactAptosScheme(server);
 - **Fungible Asset Transfers**: Uses Aptos's native `primary_fungible_store::transfer`
 - **Network Support**: Mainnet (`aptos:1`) and Testnet (`aptos:2`)
 
+## Testnet Resources
+
+For testing on Aptos testnet, you can obtain test tokens from these faucets:
+
+- **Test APT**: https://aptos.dev/network/faucet or through an account on [geomi.dev](https://geomi.dev/manage/faucet)
+- **Test USDC**: https://faucet.circle.com/
+
 ## License
 
 Apache-2.0

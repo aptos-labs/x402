@@ -12,11 +12,22 @@ import { createAptosClient, deserializeAptosPayment } from "../../utils";
 import { getAptosChainId, MAX_GAS_AMOUNT } from "../../constants";
 
 /**
+ * Configuration options for the Aptos facilitator scheme.
+ */
+export interface ExactAptosSchemeConfig {
+  /**
+   * Whether to sponsor transaction fees (default: true)
+   */
+  sponsorTransactions?: boolean;
+}
+
+/**
  * Aptos facilitator implementation for the Exact payment scheme.
  */
 export class ExactAptosScheme implements SchemeNetworkFacilitator {
   readonly scheme = "exact";
   readonly caipFamily = "aptos:*";
+  private readonly sponsorTransactions: boolean;
 
   /**
    * Creates a new ExactAptosFacilitator instance.
@@ -177,6 +188,11 @@ export class ExactAptosScheme implements SchemeNetworkFacilitator {
         };
       }
 
+      // Verify the function is the correct transfer function
+      // We use primary_fungible_store::transfer instead of fungible_asset::transfer because:
+      // - primary_fungible_store::transfer operates on primary stores (the default store for each asset)
+      // - It automatically creates the recipient's store if it doesn't exist
+      // - fungible_asset::transfer is a lower-level function for arbitrary store-to-store transfers
       const moduleAddress = entryFunction.module_name.address;
       const moduleName = entryFunction.module_name.name.identifier;
       const functionName = entryFunction.function_name.identifier;

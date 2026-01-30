@@ -17,6 +17,13 @@ export interface AptosFacilitatorConfig {
    * Examples: "aptos:1" (mainnet), "aptos:2" (testnet), ["aptos:1", "aptos:2"]
    */
   networks: Network | Network[];
+
+  /**
+   * Whether the facilitator should sponsor transaction fees (default: true)
+   * When true, the facilitator pays gas fees on behalf of clients.
+   * When false, clients pay their own gas fees.
+   */
+  sponsorTransactions?: boolean;
 }
 
 /**
@@ -45,6 +52,7 @@ export function registerExactAptosScheme(
   facilitator: x402Facilitator,
   config: AptosFacilitatorConfig,
 ): x402Facilitator {
-  facilitator.register(config.networks, new ExactAptosScheme(config.signer));
+  const sponsorTransactions = config.sponsorTransactions ?? true;
+  facilitator.register(config.networks, new ExactAptosScheme(config.signer, { sponsorTransactions }));
   return facilitator;
 }

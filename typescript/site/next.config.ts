@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // @aptos-labs/ts-sdk uses native crypto and other Node.js APIs that conflict with Next.js bundling
   serverExternalPackages: ["@aptos-labs/ts-sdk"],
   images: {
     formats: ["image/avif", "image/webp"],

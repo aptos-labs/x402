@@ -1,7 +1,12 @@
-import { Account, Ed25519PrivateKey, PrivateKey, PrivateKeyVariants } from "@aptos-labs/ts-sdk";
 import { base58 } from "@scure/base";
 import { createKeyPairSignerFromBytes } from "@solana/kit";
-import { toFacilitatorAptosSigner } from "@x402/aptos";
+import {
+  Account,
+  Ed25519PrivateKey,
+  PrivateKey,
+  PrivateKeyVariants,
+  toFacilitatorAptosSigner,
+} from "@x402/aptos";
 import { ExactAptosScheme } from "@x402/aptos/exact/facilitator";
 import { x402Facilitator } from "@x402/core/facilitator";
 import { Network } from "@x402/core/types";
@@ -31,9 +36,8 @@ async function createFacilitator(): Promise<x402Facilitator> {
     throw new Error("❌ FACILITATOR_SVM_PRIVATE_KEY environment variable is required");
   }
 
-  if (!process.env.FACILITATOR_APTOS_PRIVATE_KEY) {
-    throw new Error("❌ FACILITATOR_APTOS_PRIVATE_KEY environment variable is required");
-  }
+  // Aptos is optional for now (testnet-only support)
+  const hasAptos = !!process.env.FACILITATOR_APTOS_PRIVATE_KEY;
 
   // Initialize the EVM account from private key
   const evmAccount = privateKeyToAccount(process.env.FACILITATOR_EVM_PRIVATE_KEY as `0x${string}`);
@@ -95,24 +99,24 @@ async function createFacilitator(): Promise<x402Facilitator> {
   // Initialize SVM signer - handles all Solana networks with automatic RPC creation
   const svmSigner = toFacilitatorSvmSigner(svmAccount);
 
-  // Initialize Aptos account from private key (format to AIP-80 compliant format)
-  const formattedAptosKey = PrivateKey.formatPrivateKey(
-    process.env.FACILITATOR_APTOS_PRIVATE_KEY as string,
-    PrivateKeyVariants.Ed25519,
-  );
-  const aptosPrivateKey = new Ed25519PrivateKey(formattedAptosKey);
-  const aptosAccount = Account.fromPrivateKey({ privateKey: aptosPrivateKey });
-
-  // Initialize Aptos signer - handles all Aptos networks with automatic RPC creation
-  const aptosSigner = toFacilitatorAptosSigner(aptosAccount);
-
-  // Create and configure the facilitator
+  // Create and configure the facilitator with EVM and SVM
   const facilitator = new x402Facilitator()
     .register("eip155:84532", new ExactEvmScheme(evmSigner))
     .registerV1("base-sepolia" as Network, new ExactEvmSchemeV1(evmSigner))
     .register("solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1", new ExactSvmScheme(svmSigner))
-    .registerV1("solana-devnet" as Network, new ExactSvmSchemeV1(svmSigner))
-    .register("aptos:2", new ExactAptosScheme(aptosSigner));
+    .registerV1("solana-devnet" as Network, new ExactSvmSchemeV1(svmSigner));
+
+  // Optionally register Aptos if configured
+  if (hasAptos) {
+    const formattedAptosKey = PrivateKey.formatPrivateKey(
+      process.env.FACILITATOR_APTOS_PRIVATE_KEY as string,
+      PrivateKeyVariants.Ed25519,
+    );
+    const aptosPrivateKey = new Ed25519PrivateKey(formattedAptosKey);
+    const aptosAccount = Account.fromPrivateKey({ privateKey: aptosPrivateKey });
+    const aptosSigner = toFacilitatorAptosSigner(aptosAccount);
+    facilitator.register("aptos:2", new ExactAptosScheme(aptosSigner));
+  }
 
   return facilitator;
 }
