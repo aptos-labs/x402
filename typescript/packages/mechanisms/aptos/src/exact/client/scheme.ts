@@ -33,6 +33,7 @@ export class ExactAptosScheme implements SchemeNetworkClient {
     x402Version: number,
     paymentRequirements: PaymentRequirements,
   ): Promise<Pick<PaymentPayload, "x402Version" | "payload">> {
+    // Validate inputs
     if (!this.signer.accountAddress) {
       throw new Error("Aptos account address is required");
     }
@@ -55,6 +56,7 @@ export class ExactAptosScheme implements SchemeNetworkClient {
       throw new Error("Amount must be a number");
     }
 
+    // Create Aptos client
     const aptosNetwork = getAptosNetwork(paymentRequirements.network);
     const rpcUrl = this.config?.rpcUrl || getAptosRpcUrl(aptosNetwork);
     const aptosConfig = new AptosConfig({
@@ -88,6 +90,8 @@ export class ExactAptosScheme implements SchemeNetworkClient {
     const senderAuthenticator = this.signer.signTransactionWithAuthenticator(transaction);
     const transactionBytes = transaction.bcsToBytes();
     const authenticatorBytes = senderAuthenticator.bcsToBytes();
+
+    // Encode as base64 payload
     const base64Transaction = encodeAptosPayload(transactionBytes, authenticatorBytes);
 
     const payload: ExactAptosPayload = {
