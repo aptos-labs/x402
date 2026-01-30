@@ -111,6 +111,7 @@ export class ExactAptosScheme implements SchemeNetworkFacilitator {
       }
 
       // Verify sender matches authenticator public key (for Ed25519 accounts)
+      // Note: SingleKey and MultiKey authenticators are validated during simulation (step 11)
       if (senderAuthenticator.isEd25519()) {
         const pubKey = senderAuthenticator.public_key as Ed25519PublicKey;
         const derivedAddress = AccountAddress.from(pubKey.authKey().derivedAddress());
@@ -147,7 +148,7 @@ export class ExactAptosScheme implements SchemeNetworkFacilitator {
         }
       }
 
-      // SECURITY: Prevent facilitator from signing away their own tokens
+      // SECURITY (reference implementation): Prevent facilitator from signing away their own tokens
       if (isSponsored && signerAddresses.includes(senderAddress)) {
         return {
           isValid: false,
@@ -317,7 +318,6 @@ export class ExactAptosScheme implements SchemeNetworkFacilitator {
   ): Promise<SettleResponse> {
     const aptosPayload = payload.payload as ExactAptosPayload;
 
-    // Verify first
     const valid = await this.verify(payload, requirements);
     if (!valid.isValid) {
       return {
