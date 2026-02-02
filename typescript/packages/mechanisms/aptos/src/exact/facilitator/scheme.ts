@@ -169,6 +169,11 @@ export class ExactAptosScheme implements SchemeNetworkFacilitator {
       }
 
       // Step 6: Verify the transaction contains a fungible asset transfer operation
+      // We accept both primary_fungible_store::transfer and fungible_asset::transfer:
+      // - primary_fungible_store::transfer operates on primary stores (the default store for each asset)
+      //   and automatically creates the recipient's store if it doesn't exist
+      // - fungible_asset::transfer is a lower-level function for arbitrary store-to-store transfers
+      //   and is more gas efficient when stores already exist
       if (!entryFunction) {
         return {
           isValid: false,
