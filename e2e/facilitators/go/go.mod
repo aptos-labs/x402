@@ -6,7 +6,7 @@ toolchain go1.24.1
 
 require (
 	github.com/coinbase/x402/go v0.0.0
-	github.com/ethereum/go-ethereum v1.16.7
+	github.com/ethereum/go-ethereum v1.16.8
 	github.com/gagliardetto/solana-go v1.14.0
 	github.com/gin-gonic/gin v1.11.0
 )
